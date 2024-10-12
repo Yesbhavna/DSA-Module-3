@@ -1,0 +1,127 @@
+What is Hashing?
+
+Hashing is the process of converting data into a fixed-size value or a key, usually a string of characters, that represents the original data. The resulting value, called a "hash value" or "hash code," is typically much shorter than the original data, but it uniquely represents the input. Hashing is widely used in computer science for tasks like searching, indexing, data integrity verification, and password storage.
+
+What is a Hash Function?
+A hash function is a mathematical function that takes an input (or "message") and returns a fixed-size string of bytes. 
+
+Hash Function-  ℎ(𝑥) = 𝑥 % size of the hash table
+            h(x)=x%size of the hash table
+In this case, the hash function takes an integer value x and computes the remainder when x is divided by the size of the hash table. This ensures that the hash value (or index) will always fall within the valid range of indices in the hash table (i.e., 0 to size - 1).
+
+Example:
+Let’s say we have a hash table of size 10 and we want to store some values in it using the hash function
+
+                    ℎ(𝑥) = 𝑥 % 10
+
+        Inputs and Corresponding Hash Values:
+        x = 15
+        ℎ(15) = 15 % 10 = 5
+        So, 15 will be stored at index 5 in the hash table.
+        x = 23
+        ℎ(23) = 23 % 10 = 3
+        So, 23 will be stored at index 3 in the hash table.
+        x = 37
+        ℎ(37) = 37 % 10 = 7
+        So, 37 will be stored at index 7 in the hash table.
+
+Visualization of the Hash Table:
+Assume the values are stored at the calculated indices:
+
+makefile
+Copy code
+Index:  0  1  2  3   4  5  6  7  8  9
+Value:           23     15    37
+This method is efficient for data storage and retrieval in constant time 𝑂(1)
+O(1), as long as there are no collisions (i.e., different inputs producing the same hash value).
+
+What if there’s a Collision?
+For instance, if we now try to insert x = 25:
+    ℎ(25) = 25 % 10 = 5
+h(25)=25%10=5, which means the hash value for 25 is also 5.
+But we already have 15 stored at index 5!
+This is called a collision, and hash tables use various techniques to handle collisions, such as chaining(open hashing) (where multiple values are stored at the same index using a linked list or similar data structure) or open addressing (where we probe the table for the next available slot).
+
+When multiple keys hash to the same index in a hash table, this is called a collision. There are several strategies to handle these collisions. Below are the two most common techniques:
+
+1. Chaining (Open Hashing)
+In chaining, each position in the hash table holds a reference to a list or chain of elements. If multiple keys hash to the same index, they are stored in that list (usually a linked list) at that index.
+
+Example:
+Using the same hash function 
+    ℎ(𝑥) = 𝑥 % 10
+h(x)=x%10 and hash table size of 10, let's insert the values 15, 25, and 35.
+
+For 15: ℎ(15) = 15 % 10 = 5
+h(15)=15%10=5
+We store 15 at index 5.
+
+For 25: ℎ(25) = 25 % 10 = 5
+h(25)=25%10=5
+There's already a value (15) at index 5, so we chain 25 to the same index.
+
+For 35: ℎ(35) = 35 % 10 = 5
+h(35)=35%10=5
+We chain 35 to the same index.
+
+Visualization:
+makefile
+Copy code
+Index:  0  1  2  3  4  5        6  7  8  9
+Value:            [15 -> 25 -> 35]
+
+Advantages:
+Simple and efficient to implement.
+The hash table can grow dynamically by adjusting the chain size without needing to resize the entire table.
+In the best case, search, insert, and delete operations take constant time 
+𝑂(1)
+O(1), though in the worst case (if the chains become long), these operations could degrade to 
+𝑂(𝑛)
+O(n), where  n is the number of keys.
+
+
+Disadvantages:
+The memory overhead for pointers in each chain (especially if the chains are long).
+In the worst case, the time complexity can degrade if many keys hash to the same index.
+
+
+2. Open Addressing (Probing)
+In open addressing, when a collision occurs, the algorithm searches for the next available slot in the hash table by following a probing sequence. The key is placed in the next available position according to some probing technique.
+
+
+Linear Probing: After a collision, we check the next slot (i.e., increment the index by 1) until we find an empty spot.
+
+Hash function:
+ℎ′(𝑥,𝑖) = (ℎ(𝑥) + 𝑖) % table size
+h′(x,i)=(h(x)+i) % table size, where 
+𝑖.........i is the number of steps taken so far.
+
+Insert 15:
+ℎ(15) = 15 % 10 = 5
+h(15)=15%10=5. Store 15 at index 5.
+
+Insert 25:
+ℎ(25) = 25 % 10 = 5
+h(25)=25%10=5. Index 5 is occupied, so we probe to the next index (index 6) and store 25 there.
+
+Insert 35:
+ℎ(35) = 35 % 10 = 5
+h(35)=35%10=5. Index 5 is occupied, probe to index 6 (occupied), and move to index 7, where we store 35.
+
+Visualization of Linear Probing:
+makefile
+Copy code
+Index:  0  1  2  3  4  5   6   7  8  9
+Value:                 15  25  35
+
+
+Advantages:
+Simple to implement.
+No need for additional memory for chains.
+
+
+Disadvantages:
+Clustering: Continuous blocks of occupied slots can form, leading to slower performance as probing spreads out over longer ranges.
+Performance degrades if the hash table starts getting full.
+
+
